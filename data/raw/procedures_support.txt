@@ -1,0 +1,38 @@
+GUIDE DE DEPANNAGE - SUPPORT NIVEAU 1
+
+== Ecran noir au demarrage ==
+Si l'ecran reste noir au demarrage du PC, verifiez d'abord que le cable d'alimentation
+est bien branche a la fois sur la prise murale et sur le PC. Ensuite, maintenez le
+bouton d'allumage enfonce pendant dix secondes pour forcer un redemarrage. Si le
+probleme persiste, verifiez que le cable video (HDMI ou DisplayPort) est bien connecte
+entre le PC et l'ecran. Si aucune de ces etapes ne fonctionne, creez un ticket avec la
+priorite haute et mentionnez le modele exact du PC.
+
+== Mot de passe oublie ==
+Si un utilisateur a oublie son mot de passe Windows, il doit se rendre sur le portail
+de reinitialisation interne a l'adresse reset.entreprise.local. Il devra repondre a ses
+questions de securite ou recevoir un code par SMS. Si l'utilisateur n'a pas acces a son
+telephone enregistre, le support niveau un peut reinitialiser manuellement le mot de
+passe via l'outil d'administration, apres avoir verifie l'identite de la personne.
+
+== Imprimante reseau non detectee ==
+Quand une imprimante reseau n'apparait plus dans la liste des imprimantes disponibles,
+commencez par redemarrer l'imprimante elle-meme en l'eteignant trente secondes. Verifiez
+ensuite qu'elle a bien recupere une adresse IP en consultant son ecran de configuration.
+Si l'adresse IP a change, il faudra la reconfigurer manuellement dans les parametres
+d'impression du PC concerne. Si le probleme touche plusieurs postes en meme temps,
+escaladez immediatement vers le support niveau deux.
+
+== Connexion Wifi instable ==
+Pour un probleme de wifi qui se deconnecte frequemment, demandez a l'utilisateur
+d'oublier le reseau puis de le reconnecter en ressaisissant le mot de passe. Verifiez
+aussi que le pilote de la carte reseau est a jour via le gestionnaire de peripheriques.
+Si plusieurs utilisateurs du meme etage signalent le probleme en meme temps, il s'agit
+probablement d'un probleme d'infrastructure a signaler a l'equipe reseau.
+
+== Logiciel metier qui plante ==
+Si le logiciel de gestion des concessions (DealerSoft) plante au lancement, demandez
+d'abord a l'utilisateur de redemarrer son poste. Verifiez ensuite que la version
+installee est bien la derniere version validee par le siege. En cas de plantage
+persistant, recuperez le fichier journal d'erreurs dans le dossier C:\DealerSoft\logs
+et joignez-le au ticket avant de l'escalader.

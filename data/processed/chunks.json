@@ -1,0 +1,42 @@
+[
+  {
+    "id": "procedures_support::Ecran noir au demarrage",
+    "text": "Si l'ecran reste noir au demarrage du PC, verifiez d'abord que le cable d'alimentation\nest bien branche a la fois sur la prise murale et sur le PC. Ensuite, maintenez le\nbouton d'allumage enfonce pendant dix secondes pour forcer un redemarrage. Si le\nprobleme persiste, verifiez que le cable video (HDMI ou DisplayPort) est bien connecte\nentre le PC et l'ecran. Si aucune de ces etapes ne fonctionne, creez un ticket avec la\npriorite haute et mentionnez le modele exact du PC.",
+    "metadata": {
+      "source": "procedures_support",
+      "section": "Ecran noir au demarrage"
+    }
+  },
+  {
+    "id": "procedures_support::Mot de passe oublie",
+    "text": "Si un utilisateur a oublie son mot de passe Windows, il doit se rendre sur le portail\nde reinitialisation interne a l'adresse reset.entreprise.local. Il devra repondre a ses\nquestions de securite ou recevoir un code par SMS. Si l'utilisateur n'a pas acces a son\ntelephone enregistre, le support niveau un peut reinitialiser manuellement le mot de\npasse via l'outil d'administration, apres avoir verifie l'identite de la personne.",
+    "metadata": {
+      "source": "procedures_support",
+      "section": "Mot de passe oublie"
+    }
+  },
+  {
+    "id": "procedures_support::Imprimante reseau non detectee",
+    "text": "Quand une imprimante reseau n'apparait plus dans la liste des imprimantes disponibles,\ncommencez par redemarrer l'imprimante elle-meme en l'eteignant trente secondes. Verifiez\nensuite qu'elle a bien recupere une adresse IP en consultant son ecran de configuration.\nSi l'adresse IP a change, il faudra la reconfigurer manuellement dans les parametres\nd'impression du PC concerne. Si le probleme touche plusieurs postes en meme temps,\nescaladez immediatement vers le support niveau deux.",
+    "metadata": {
+      "source": "procedures_support",
+      "section": "Imprimante reseau non detectee"
+    }
+  },
+  {
+    "id": "procedures_support::Connexion Wifi instable",
+    "text": "Pour un probleme de wifi qui se deconnecte frequemment, demandez a l'utilisateur\nd'oublier le reseau puis de le reconnecter en ressaisissant le mot de passe. Verifiez\naussi que le pilote de la carte reseau est a jour via le gestionnaire de peripheriques.\nSi plusieurs utilisateurs du meme etage signalent le probleme en meme temps, il s'agit\nprobablement d'un probleme d'infrastructure a signaler a l'equipe reseau.",
+    "metadata": {
+      "source": "procedures_support",
+      "section": "Connexion Wifi instable"
+    }
+  },
+  {
+    "id": "procedures_support::Logiciel metier qui plante",
+    "text": "Si le logiciel de gestion des concessions (DealerSoft) plante au lancement, demandez\nd'abord a l'utilisateur de redemarrer son poste. Verifiez ensuite que la version\ninstallee est bien la derniere version validee par le siege. En cas de plantage\npersistant, recuperez le fichier journal d'erreurs dans le dossier C:\\DealerSoft\\logs\net joignez-le au ticket avant de l'escalader.",
+    "metadata": {
+      "source": "procedures_support",
+      "section": "Logiciel metier qui plante"
+    }
+  }
+]

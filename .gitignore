@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+*.py[cod]
+.DS_Store
+
+# Donnees generees localement
+chroma_db/
+logs/
