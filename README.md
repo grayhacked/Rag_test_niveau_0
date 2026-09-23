@@ -33,8 +33,7 @@ data/processed/vector_store.pkl
 ## Installation
 
 ```bash
-pip install scikit-learn numpy anthropic
-export ANTHROPIC_API_KEY="votre_cle_ici"
+python -m pip install openai
 ```
 
 ## Faire tourner le pipeline complet

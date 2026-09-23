@@ -11,13 +11,16 @@ ca comme un seul texte et genere la reponse la plus logique, ancree dans
 le contexte fourni.
 
 Pour appeler un vrai modele, il vous faut une cle API. Sur votre poste :
-    pip install anthropic
-    export ANTHROPIC_API_KEY="votre_cle_ici"
+    pip install openai
+    export OPENAI_API_KEY="votre_cle_ici"
 """
 
 import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent))
 from query import search
@@ -57,7 +60,7 @@ Question de l'employe : {question}"""
 def generate_answer(question: str) -> str:
     system, user_message = build_prompt(question)
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    api_key = os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
     if not api_key:
         print("=" * 70)
         print("PAS DE CLE API DETECTEE - voici le sandwich qui SERAIT envoye")
@@ -70,16 +73,18 @@ def generate_answer(question: str) -> str:
         return "(pas de reponse generee - cle API manquante, voir ci-dessus)"
 
     # Avec une cle API, voici l'appel reel :
-    import anthropic
+    from openai import OpenAI
 
-    client = anthropic.Anthropic(api_key=api_key)
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
+    client = OpenAI(api_key=api_key)
+    response = client.chat.completions.create(
+        model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
         max_tokens=500,
-        system=system,
-        messages=[{"role": "user", "content": user_message}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user_message},
+        ],
     )
-    return response.content[0].text
+    return response.choices[0].message.content
 
 
 if __name__ == "__main__":
