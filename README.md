@@ -1,80 +1,158 @@
 # Support RAG - Prototype
 
-Assistant de support niveau 1 base sur RAG (Retrieval-Augmented Generation).
-Prototype construit pour prouver la valeur du concept avant une version production.
+Assistant de support niveau 1 base sur le principe **RAG** (*Retrieval-Augmented
+Generation*). Le prototype recherche les passages les plus proches d'une
+question dans une documentation locale, puis peut transmettre ces passages a
+un modele OpenAI pour generer une reponse ancree dans le contexte.
 
-## Le pipeline, en 4 scripts = 6 etapes
+## Fonctionnement
 
-```
-data/raw/*.txt          <- vos documents bruts (procedures de support)
-      |
-      v
-  1&2. src/ingest.py       -> extraction + decoupage en chunks
-      |
-      v
+```text
+data/raw/*.txt
+    |  src/ingest.py : lecture et decoupage par sections == Titre ==
+    v
 data/processed/chunks.json
-      |
-      v
-  3.   src/embed_store.py  -> vectorisation (TF-IDF) + stockage
-      |
-      v
+    |  src/embed_store.py : vectorisation TF-IDF et sauvegarde
+    v
 data/processed/vector_store.pkl
-      |
-      v
-  4&5. src/query.py        -> vectorise la question + recherche par
-                               similarite cosinus (codee a la main)
-      |
-      v
-  6.   src/generate.py     -> assemble le "sandwich" (instruction +
-                               contexte + question) et appelle le
-                               modele de langage
+    |  src/query.py : recherche par similarite cosinus
+    v
+src/generate.py : contexte + question -> reponse du modele
 ```
 
-## Installation
+Le stockage est volontairement local et simple : les embeddings sont des
+vecteurs TF-IDF et le fichier `vector_store.pkl` contient le vectorizer, les
+vecteurs et les metadonnees des chunks.
 
-```bash
-python -m pip install openai
+## Prerequis
+
+- Python 3.10 ou plus recent
+- Une invite de commande PowerShell ou un terminal integre VS Code
+- Une cle API OpenAI uniquement pour l'etape de generation
+
+## Installation sous Windows
+
+Depuis la racine du projet :
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-## Faire tourner le pipeline complet
+Si PowerShell bloque l'activation dans la session courante :
 
-```bash
-# 1. Ajoutez vos vrais documents dans data/raw/ (format .txt pour l'instant,
-#    utilisez PyPDF2 ou pdfplumber pour extraire depuis un PDF en amont)
-
-# 2. Extraction + decoupage
-python3 src/ingest.py
-
-# 3. Vectorisation + stockage
-python3 src/embed_store.py
-
-# 4. Test de recherche seule (optionnel, pour debugger)
-python3 src/query.py "votre question ici"
-
-# 5. Generation de la reponse complete
-python3 src/generate.py "votre question ici"
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 ```
 
-## Limites de ce prototype (a corriger avant la production)
+Dans VS Code, selectionnez ensuite `.venv\Scripts\python.exe` avec
+**Python: Select Interpreter**.
 
-- **Embedding TF-IDF** : simple et local, mais moins performant qu'un vrai
-  modele d'embedding (sentence-transformers, ou l'API d'un modele comme
-  Claude). A remplacer pour de meilleurs resultats semantiques.
-- **Chunking par section `== Titre ==`** : fonctionne pour nos documents
-  bien structures, mais un vrai PDF n'a pas forcement ce format. Utiliser
-  un chunking par paragraphes/taille fixe avec chevauchement (overlap) en
-  pratique.
-- **Stockage en fichier .pkl** : suffisant pour un prototype avec quelques
-  documents. Pour des milliers de documents, passer a une vraie base
-  vectorielle comme Chroma ou Pinecone.
-- **Pas encore d'agent** : ce prototype repond a des questions, il n'agit
-  pas encore (pas de creation automatique de ticket, pas de reinitialisation
-  de mot de passe). C'est la prochaine etape.
-- **Confidentialite** : verifiez qu'aucune donnee client sensible n'est
-  envoyee a une API externe sans anonymisation prealable.
+## Configuration
 
-## Prochaine etape : la couche agent
+Copiez le modele de configuration dans un fichier `.env` a la racine, puis
+renseignez vos valeurs :
 
-Donner au modele acces a des outils (creer_ticket, reinitialiser_mdp) via
-le "function calling" de l'API Anthropic, et une boucle qui laisse le
-modele decider s'il repond ou s'il agit.
+```dotenv
+APP_ENV=development
+LLM_API_KEY=votre_cle_api
+LLM_MODEL=gpt-4o-mini
+```
+
+`.env` est ignore par Git. Ne committez jamais une cle API et ne la partagez
+pas dans une capture, un ticket ou une conversation. Si une cle a ete exposee,
+revoquez-la immediatement et creez-en une nouvelle.
+
+## Execution
+
+Ajoutez ou modifiez les documents texte dans `data/raw/`. Les sections a
+indexer doivent etre delimitees ainsi :
+
+```text
+== Probleme d'ecran noir ==
+Redemarrez le poste et verifiez le cable video.
+```
+
+Puis executez les etapes dans cet ordre :
+
+```powershell
+python src/ingest.py
+python src/embed_store.py
+```
+
+Testez uniquement la recherche :
+
+```powershell
+python src/query.py "mon ecran reste noir au demarrage"
+```
+
+Generez une reponse avec le modele configure :
+
+```powershell
+python src/generate.py "mon ecran reste noir au demarrage"
+```
+
+Sans `LLM_API_KEY`, `generate.py` affiche le prompt construit au lieu
+d'appeler l'API. Cela permet de verifier la recuperation sans consommer de
+quota.
+
+## Structure du projet
+
+```text
+data/raw/                 Documents source .txt
+data/processed/           Chunks et index generes localement
+src/ingest.py             Extraction et decoupage
+src/embed_store.py        Vectorisation TF-IDF
+src/query.py              Recherche des chunks pertinents
+src/generate.py           Generation de la reponse
+requirements.txt          Dependances Python
+```
+
+Les fichiers `data/processed/chunks.json` et `data/processed/vector_store.pkl`
+sont regeneres par le pipeline apres toute modification documentaire.
+
+## Depannage
+
+**`Import "openai" could not be resolved`**
+
+Verifiez que VS Code utilise `.venv`, puis installez les dependances dans ce
+meme interpreteur :
+
+```powershell
+python -m pip install -r requirements.txt
+python -c "from openai import OpenAI; print('openai OK')"
+```
+
+**`FileNotFoundError` sur `vector_store.pkl`**
+
+Executez d'abord `ingest.py`, puis `embed_store.py`.
+
+**Aucun chunk ou resultats peu pertinents**
+
+Verifiez que les fichiers sont en `.txt`, que les titres utilisent bien la
+syntaxe `== Titre ==`, et que les termes de la question apparaissent dans la
+documentation. TF-IDF ne comprend pas les synonymes comme un modele
+semantique.
+
+## Limites connues
+
+- TF-IDF est rapide et local, mais moins semantique qu'un vrai modele
+  d'embedding.
+- Le decoupage depend de titres `== ... ==` et ne traite pas directement les
+  PDF.
+- Le fichier pickle convient a un prototype local, pas a un index partage ou
+  volumineux.
+- Le prototype repond aux questions mais ne declenche pas encore d'actions
+  comme la creation d'un ticket.
+- Les donnees sensibles doivent etre anonymisees avant tout envoi a une API
+  externe.
+
+## Evolutions envisagees
+
+1. Ajouter une extraction PDF et un chunking avec taille maximale et overlap.
+2. Remplacer TF-IDF par des embeddings semantiques et un vrai vector store.
+3. Ajouter des tests automatises sur le parsing, la recherche et le prompt.
+4. Encadrer les actions support avec des outils explicites et des controles
+   avant execution.
